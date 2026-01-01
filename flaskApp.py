@@ -77,6 +77,7 @@ def place_order():
 	total = Calc_total(total_prices)
 	if request.form.get('confirm_action') == 'true':
 		Sell_order_update(book_types, book_names, quantities)
+		return redirect(url_for('home'))
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)
