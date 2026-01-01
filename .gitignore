@@ -7,6 +7,7 @@
 #dont ignore from:
 !flaskApp.py
 !templates/
+!requirements.txt
 
 !templates/*.html
 !.gitignore
