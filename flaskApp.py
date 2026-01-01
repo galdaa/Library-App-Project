@@ -7,6 +7,7 @@ from oauth2client.service_account import ServiceAccountCredentials # google API
 #book_allowed_types = {"SA", "AA", "S~ANON", "L-ANON"}
 STOCK_QUAN_COL_FILE_INDEX =  3
 #access to google
+#TODO - add future orders from file display and update
 app = Flask(__name__)
 
 #method to connect google
@@ -74,7 +75,7 @@ def place_order():
 	print(f"total Order: \nTyeps: {book_types} \nNames: {book_names} \n"
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
 	total = Calc_total(total_prices)
-	if request.method == 'POST':
+	if request.form.get('confirm_action') == 'true':
 		Sell_order_update(book_types, book_names, quantities)
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
