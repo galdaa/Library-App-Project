@@ -1,5 +1,4 @@
-<form method="POST" action="{{ url_for('place_order') }}">
-    
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 
@@ -28,6 +27,7 @@
 	</style>    
 </head>
 <body>
+	<form method="POST" action="{{ url_for('place_order') }}">
 			<table>
 				<tbody>
 					<tr>
@@ -49,10 +49,12 @@
 					</tr>          
 				</tbody>
 			</table>
+			<h1>ההזמנה מוכנה!</h1>
+		<button type="submit" name="confirm_action" value="true">אשר הזמנה וסיים</button>
+	</form>
 </body>
 
-<h1>ההזמנה מוכנה!</h1>
-	<button type="submit" name="confirm_action" value="true">אשר הזמנה וסיים</button>
+
 
 <ul>
     <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
@@ -61,4 +63,3 @@
 </ul>
 
 </html>
-</form>
