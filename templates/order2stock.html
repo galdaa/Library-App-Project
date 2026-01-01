@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>סיפרייה</title>
+	<style>
+		table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    	}
+    	th, td {
+        border: 1px solid #333;
+        padding: 12px;
+        text-align: right;
+    	}
+		h1 {
+			text-align: center;
+		}
+		pre {
+			font-size: 16px;
+		}
+	</style>    
+</head>
+<body>
+    <h1>הזמנת ספרים למלאי:</h1>   
+
+    <form method="POST" action="{{ url_for('place_order') }}">
+	{% for myBookType in items %} 
+			<p>{{myBookType.book_type}}</p>
+			<table>
+				<tbody>
+					<tr>
+						<td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להוסיף להזמנה:</td>
+					</tr>
+					{% for book in myBookType.books %}
+					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
+						<tr>
+							<td><pre>{{book.name}}</pre></td>
+							<td>{{book.price}}</td>
+							<td>{{book.stock_quantity}}</td>
+							<td>
+							<label for="quantity"></label><br>
+								<input type="number" 
+									id="quantity" 
+									name="quantities[]" 
+									value="0"
+									min="0" 
+									''TODO ''max={{MONEY_WE_HAVE?}}
+									required>
+								
+								<input type="hidden" name="book_names[]" value="{{ book.name }}">
+								<input type="hidden" name="book_prices[]" value="{{ book.price }}">
+							</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		{% endfor %}
+
+
+    <button type="submit">בצע הזמנה</button>
+    </form>
+
+    <ul>
+        <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
+    </ul>
+</body>
+
+</html>
+

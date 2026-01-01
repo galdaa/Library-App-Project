@@ -74,7 +74,8 @@ def place_order():
 	print(f"total Order: \nTyeps: {book_types} \nNames: {book_names} \n"
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
 	total = Calc_total(total_prices)
-	Sell_order_update(book_types, book_names, quantities)
+	if request.method == 'POST':
+		Sell_order_update(book_types, book_names, quantities)
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)
@@ -120,48 +121,4 @@ def Clean_order(book_types, book_names, book_prices, quantities):
 
 if __name__ == '__main__':
     app.run(debug=True)
-    
-"""
-    full_inventory = {}
-    for sub_sheet in sheet.worksheets():
-        if sub_sheet.title == "MissingItems":
-            continue
-        full_inventory[sub_sheet.title] = sub_sheet.get_all_records()
-    """
-    
-'''book_types = {"SA", "AA", "S-ANON", "L-ANON"}
-    sheet = {}# get_sheet("AA")
-    
-    total = 0'''
-    #book_types = []
-'''book_names = []
-    book_prices = []
-    quantities = []
-    min_quan = []'''
-'''for book_type in book_types:
-        book_names.append(get_sheet(book_type).col_values(1)[2:])
-        book_prices.append(get_sheet(book_type).col_values(2)[2:])
-        quantities.append(get_sheet(book_type).col_values(3)[2:])
-        min_quan.append(get_sheet(book_type).col_values(4)[2:])
-    '''
-'''items = []
-    for book_type in book_types:
-        type_data = {
-        	'book_type' : book_type,
-        	'books' : get_sheet(book_type).get_all_records()
-        }
-        items.append(type_data)
-        #sheet [book_type] = get_sheet(book_type).get_all_records()
-        #sheet.append(get_sheet(book_type).title)
-        #sheet.append(get_sheet(book_type).get_all_records())
-
-    print(items)
-    if request.method == 'POST':
-        print("post")
-    #print(sheet)
-    #items = sheet
-#sheet =.worksheet("Inventory")
-    #sheet.append_row(["ישראל ישראלי", "25", "תל אביב"])
-    #full_inventory = sheet.get_all_records()#.cell(1, 2).value
-    #print(full_inventory)
-    return render_template('stock_page.html', items = items, total = total)'''
+  

@@ -1,5 +1,6 @@
-<form method="POST" action="{{ url_for('home') }}">
-    
+<form method="POST" action="{{ url_for('place_order') }}">
+TODO action1 - order to stock - action2 replace order in file
+display orders from file
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 
@@ -51,13 +52,10 @@
 			</table>
 </body>
 
-<h1>ההזמנה מוכנה!</h1>
+<h1>ההזמנה למלאי מוכנה!</h1>
 	<button type="submit">אשר הזמנה וסיים</button>
-
 <ul>
     <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
-	<li><a href="{{ url_for('order_page') }}">חזרה להזמנת ספרים</a></li>
-    <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
 </ul>
 
 </html>
