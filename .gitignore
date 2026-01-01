@@ -1,0 +1,12 @@
+#ignore all
+*
+
+#ignore
+*.json
+
+#dont ignore from:
+!flaskApp.py
+!templates/
+
+!templates/*.html
+!.gitignore
