@@ -40,6 +40,12 @@
                         <td>{{total_prices[i]}}</td>
                     </tr>
                     {% endfor %}
+					{% for i in range(book_types|length) %}
+						<input type="hidden" name="book_types[]"  value="{{ book_types[i] }}">
+						<input type="hidden" name="book_names[]"  value="{{ book_names[i] }}">
+						<input type="hidden" name="book_prices[]" value="{{ book_prices[i] }}">
+						<input type="hidden" name="quantities[]"  value="{{ quantities[i] }}">
+					{% endfor %}
 				</tbody>
 			</table>form
             			<table>
