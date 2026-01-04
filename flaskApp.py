@@ -6,6 +6,7 @@ from oauth2client.service_account import ServiceAccountCredentials # google API
 
 #book_allowed_types = {"SA", "AA", "S~ANON", "L-ANON"}
 STOCK_QUAN_COL_FILE_INDEX =  3
+MONEY = "Money"
 #access to google
 #TODO - add future orders from file display and update
 app = Flask(__name__)
@@ -77,6 +78,7 @@ def place_order():
 	total = Calc_total(total_prices)
 	if request.form.get('confirm_action') == 'true':
 		Sell_order_update(book_types, book_names, quantities)
+		Add_money(total)
 		return redirect(url_for('home'))
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
@@ -93,6 +95,13 @@ def Sell_order_update(book_types, book_names, quantities):
 		new_stock = int(curr_stock - quan)
 		sheet.update_cell(row_index, STOCK_QUAN_COL_FILE_INDEX, new_stock)
 		print(f"Updated {book_names[i]}: {curr_stock} -> {new_stock}")
+
+def Add_money(money):
+	sheet = get_sheet(MONEY)
+	curr_money = int(sheet.cell(1, 1).value)
+	new_money = int(curr_money + int(money))
+	sheet.update_cell(1, 1, new_money)
+	print(f"Updated Money {curr_money} + {money} = {new_money}")
 
 def Calc_total(total_prices):
 	total = 0
