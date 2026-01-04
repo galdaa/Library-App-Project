@@ -51,7 +51,7 @@
 						<input type="hidden" name="quantities[]"  value="{{ quantities[i] }}">
 					{% endfor %}
 				</tbody>
-			</table>form
+			</table>
             			<table>
 				<tbody>
 					<tr>
@@ -61,7 +61,11 @@
 			</table>
 			<h1>ההזמנה מוכנה!</h1>
 			<h1>לחץ אישור לבצע מכירה:</h1>
-			<h2>(*יש לוודא שהתשלום עבר)</h2>
+			<h2>
+				(*יש לוודא שהתשלום עבר)
+				<br>
+				<input type="text" name="seller" placeholder="שם ספרן">
+			</h2>
 		<div style="text-align: center;">
 		<button type="submit" name="confirm_action" value="true">אשר מכירה וסיים</button>
 		</div>

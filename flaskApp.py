@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for #flask env
+from datetime import datetime # for history
 
 #to use google sheet API:
 import gspread 
@@ -7,6 +8,8 @@ from oauth2client.service_account import ServiceAccountCredentials # google API
 #book_allowed_types = {"SA", "AA", "S~ANON", "L-ANON"}
 STOCK_QUAN_COL_FILE_INDEX =  3
 MONEY = "Money"
+HISTORY = "History"
+
 #access to google
 #TODO - add future orders from file display and update
 app = Flask(__name__)
@@ -79,6 +82,9 @@ def place_order():
 	if request.form.get('confirm_action') == 'true':
 		Sell_order_update(book_types, book_names, quantities)
 		Add_money(total)
+		seller = request.form.get('seller')
+		print(seller)
+		Add_history(seller, book_types, book_names, quantities, total_prices)
 		return redirect(url_for('home'))
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
@@ -102,6 +108,20 @@ def Add_money(money):
 	new_money = int(curr_money + int(money))
 	sheet.update_cell(1, 1, new_money)
 	print(f"Updated Money {curr_money} + {money} = {new_money}")
+
+def Get_money():
+	sheet = get_sheet(MONEY)
+	return int(sheet.cell(1, 1).value)
+
+#TODO
+def Add_history(seller, book_types, book_names, quantities, prices):
+	now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+	sheet = get_sheet(HISTORY)
+	for i in range(len(book_types)):
+		row = [now, seller, book_types[i], book_names[i], quantities[i], prices[i]]
+		if (i == (len(book_types) - 1)):
+			row.append(Get_money())
+		sheet.append_row(row)
 
 def Calc_total(total_prices):
 	total = 0
