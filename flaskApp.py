@@ -43,8 +43,8 @@ def stock_view():
 	items = load_data()
 	return render_template('stock_page.html', items = items)
 
-@app.route('/order', methods=['GET', 'POST'])
-def order_page():
+@app.route('/sell', methods=['GET', 'POST'])
+def sell_page():
 	items = load_data()
 	book_types = []
 	book_names = []
@@ -58,7 +58,7 @@ def order_page():
 		quantities = request.form.getlist('quantities[]')
 		print(book_types,book_names,book_prices,quantities)
 		print("\n~e~\n")
-	return render_template('order.html', items = items)
+	return render_template('sell.html', items = items)
 
 @app.route('/place_order', methods=['POST'])
 def place_order():

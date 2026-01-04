@@ -11,14 +11,23 @@
     	}
     	th, td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 2px;
         text-align: right;
     	}
 		h1 {
 			text-align: center;
 		}
+		p {
+			font-size: 32px;
+		}
 		pre {
-			font-size: 16px;
+			font-size: 30px;
+		}
+		td {
+			font-size: 25px;
+		}
+		button {
+			font-size: 40px;
 		}
 	</style>    
 </head>
@@ -31,16 +40,16 @@
 			<table>
 				<tbody>
 					<tr>
-						<td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להזמנה:</td>
+						<pre><td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להזמנה:</td></pre>
 					</tr>
 					{% for book in myBookType.books %}
 					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>
-							<td><pre>{{book.name}}</pre></td>
+							<td>{{book.name}}</td>
 							<td>{{book.price}}</td>
 							<td>{{book.stock_quantity}}</td>
 							<td>
-							<label for="quantity"></label><br>
+							<label for="quantity"></label>
 								<input type="number" 
 									id="quantity" 
 									name="quantities[]" 
@@ -58,8 +67,9 @@
 			</table>
 		{% endfor %}
 
-
+	<div style="text-align: center;">
     <button type="submit">עבור להזמנה</button>
+	</div>
     </form>
 
     <ul>

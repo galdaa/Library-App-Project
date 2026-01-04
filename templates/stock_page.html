@@ -13,14 +13,20 @@
     	}
     	th, td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 2px;
         text-align: right;
     	}
 		h1 {
 			text-align: center;
 		}
+		p {
+			font-size: 32px;
+		}
 		pre {
-			font-size: 16px;
+			font-size: 30px;
+		}
+		td {
+			font-size: 25px;
 		}
 	</style>    
 </head>
@@ -31,11 +37,11 @@
 			<table>
 				<tbody>
 					<tr>
-						<td>שם</td><td>מחיר</td><td>כמות במלאי</td>
+						<pre><td>שם</td><td>מחיר</td><td>כמות במלאי</td></pre>
 					</tr>
 					{% for book in myBookType.books %}
 						<tr>
-							<td><pre>{{book.name}}</pre></td>
+							<td>{{book.name}}</td>
 							<td>{{book.price}}</td>
 							<td>{{book.stock_quantity}}</td>
 						</tr>
@@ -46,7 +52,7 @@
 
 <ul>
     <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
-    <li><a href="{{ url_for('order_page') }}">הזמנת ספרים</a></li>
+    <li><a href="{{ url_for('sell_page') }}">הזמנת ספרים</a></li>
 </ul>
 </body>
 </html>

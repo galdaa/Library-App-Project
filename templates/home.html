@@ -1,12 +1,21 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
-
+	<style>
+		h1, p, li{
+			text-align: center;
+		}
+        h1{
+			font-size: 50px;
+		}
+        p{
+			font-size: 40px;
+		}
+        li {
+            font-size: 40px;
+        }
+	</style>   
 <h1>ברוכים הבאים לספרייה</h1>
 <p>מה תרצו לעשות היום?</p>
-
-<ul>
     <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
-    <li><a href="{{ url_for('order_page') }}">הזמנת ספרים</a></li>
-</ul>
-
+    <li><a href="{{ url_for('sell_page') }}">קניית/מכירת ספרים</a></li>
 </html>
