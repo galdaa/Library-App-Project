@@ -28,6 +28,9 @@
 			text-align: center;
 			font-size: 20px;
 		}
+		li {
+            font-size: 20px;
+        }
 	</style>    
 </head>
 <body>
@@ -64,20 +67,42 @@
 			<h2>
 				(*יש לוודא שהתשלום עבר)
 				<br>
-				<input type="text" name="seller" placeholder="שם ספרן">
+				<input type="text" name="seller" id="seller_input" placeholder="שם ספרן" required>
 			</h2>
 		<div style="text-align: center;">
-		<button type="submit" name="confirm_action" value="true">אשר מכירה וסיים</button>
+		<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
 		</div>
 	</form>
 </body>
+<script>//script for lock button to avoid several push
+    // find first 'from' , 'submitBtn'
+    const form = document.querySelector('form');
+    const btn = document.getElementById('submitBtn');
 
+    form.addEventListener('submit', function(e) {
+		if (btn.disabled) {
+            e.preventDefault();
+            return false;
+        }
+
+        btn.disabled = true; // disable btn
+        btn.innerText = "שולח נתונים... נא להמתין"; 
+
+		const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'confirm_action';
+        hiddenInput.value = 'true';
+        form.appendChild(hiddenInput);
+
+        return true;
+    });
+</script>
 
 
 <ul>
-    <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
-	<li><a href="{{ url_for('sell_page') }}">חזרה להזמנת ספרים</a></li>
-    <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
+    <li><a href="{{ url_for('home') }}">ביטול וחזרה לדף ראשי</a></li>
+	<li><a href="{{ url_for('sell_page') }}">ביטול וחזרה להזמנת ספרים</a></li>
+    <li><a href="{{ url_for('stock_view') }}">ביטול וצפייה במלאי הספרים</a></li>
 </ul>
 
 </html>

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for #flask env
 from datetime import datetime # for history
+from cachetools import TTLCache # add caching for speed
 
 #to use google sheet API:
 import gspread 
@@ -10,22 +11,31 @@ STOCK_QUAN_COL_FILE_INDEX =  3
 MONEY = "Money"
 HISTORY = "History"
 
-#access to google
+#access to google api defines
+SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+#connect json key file
+CREDS = ServiceAccountCredentials.from_json_keyfile_name("library-app-project-482610-8a2b41102d15.json", SCOPE)
+CLIENT = gspread.authorize(CREDS)
+SPREADSHEET = CLIENT.open("Lib App Info")
+
+
 #TODO - add future orders from file display and update
+
+#cache for 10min
+cache = TTLCache(maxsize=100, ttl=600) 
+
 app = Flask(__name__)
 
 #method to connect google
 def get_sheet(name):
-    #access to google
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    #connect json key file
-    creds = ServiceAccountCredentials.from_json_keyfile_name("library-app-project-482610-8a2b41102d15.json", scope)
-    client = gspread.authorize(creds)
-    print("Logged in successfully as:", creds.service_account_email)
-    return client.open("Lib App Info").worksheet(name)# sheet file name #.worksheet("AA")
-    #return client.open_by_key("Lib App Info")
+    return SPREADSHEET.worksheet(name)
 
+#load sheet file to cache
 def load_data():	
+	if 'items_data' in cache:
+		print("Loading data from Cache")
+		return cache['items_data']
+	
 	book_types = {"SA", "AA", "S-ANON", "L-ANON"}
 	items = []
 	for book_type in book_types:
@@ -35,18 +45,26 @@ def load_data():
         }
 		items.append(type_data)
 	print(f"data was loaded:{items}")
+	cache['items_data'] = items # save in cache
+	print(f"Data was loaded from Google and cached.")
 	return items
 
+#home page for navigation
 @app.route('/')
 def home():
-	#items = load_data()
 	return render_template('home.html')
-    
+
+#page for stock view   
 @app.route('/stock_view')
 def stock_view():
 	items = load_data()
 	return render_template('stock_page.html', items = items)
 
+#############################################
+# sell page:								#
+# get from sell.html sell details : 		#
+# list of books- types, names, quantities 	#
+#############################################
 @app.route('/sell', methods=['GET', 'POST'])
 def sell_page():
 	items = load_data()
@@ -64,16 +82,19 @@ def sell_page():
 		print("\n~e~\n")
 	return render_template('sell.html', items = items)
 
+#################################################################
+# sell execution page:						                    #
+# get from place_order.html sell details + seller name and	:   #
+# do total price calc.  										#
+# update sheet file in: relevant stock, money it get, history 	#
+#################################################################
 @app.route('/place_order', methods=['POST'])
 def place_order():
 	book_types = request.form.getlist('book_types[]')
 	book_names = request.form.getlist('book_names[]')
 	book_prices = request.form.getlist('book_prices[]')
 	quantities = request.form.getlist('quantities[]')
-	#print(f"Received Order: \nTyeps: {book_types} \nNames: {book_names} \nQuantities: {quantities}")
 	Clean_order(book_types, book_names, book_prices, quantities)
-	print(f"clean Order: \nTyeps: {book_types} \nNames: {book_names} \n"
-		f"Prices: {book_prices} \nQuantities: {quantities}")
 	total_prices = []
 	total_prices = Calc_total_prices(book_prices, quantities)
 	print(f"total Order: \nTyeps: {book_types} \nNames: {book_names} \n"
@@ -82,6 +103,8 @@ def place_order():
 	if request.form.get('confirm_action') == 'true':
 		Sell_order_update(book_types, book_names, quantities)
 		Add_money(total)
+		cache.clear()
+		print("Cache cleared after sale to ensure fresh data.")
 		seller = request.form.get('seller')
 		print(seller)
 		Add_history(seller, book_types, book_names, quantities, total_prices)
@@ -89,7 +112,6 @@ def place_order():
 	return render_template('place_order.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)
-	#return redirect(url_for('stock_view'))
 
 def Sell_order_update(book_types, book_names, quantities):
 	for i in range(len(book_names)):
@@ -113,7 +135,6 @@ def Get_money():
 	sheet = get_sheet(MONEY)
 	return int(sheet.cell(1, 1).value)
 
-#TODO
 def Add_history(seller, book_types, book_names, quantities, prices):
 	now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 	sheet = get_sheet(HISTORY)
