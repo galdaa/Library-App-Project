@@ -18,21 +18,33 @@
 			text-align: center;
 		}
 		p {
+			font-weight: bold;
 			font-size: 32px;
 		}
-		pre {
-			font-size: 30px;
-		}
-		td {
+		th, td, ul {
 			font-size: 25px;
 		}
 		button {
-			font-size: 40px;
+			font-size: 35px;
 		}
 		input[type="number"] {
 			font-size: 25px;    
-			width: 80px;        
-			padding: 5px;
+			width: 40px;        
+			padding: 2px;
+		}
+		@media (max-width: 600px) {
+			td, p, input[type="number"] {
+				font-size: 18px;
+			}
+			button {
+				font-size: 28px;
+				width: 90%;
+			}
+			table {
+				width: 100%;
+				display: block;
+				overflow-x: auto;
+			}
 		}
 	</style>    
 </head>
@@ -43,12 +55,15 @@
 	{% for myBookType in items %} 
 			<p>{{myBookType.book_type}}</p>
 			<table>
-				<tbody>
-					<thead>
+				<thead>
 					<tr>
-						<td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להזמנה:</td>
+						<th>שם</th>
+						<th>מחיר</th>
+						<th>כמות במלאי</th>
+						<th>כמות להזמנה:</th>
 					</tr>
-					</thead>
+				</thead>
+				<tbody>
 					{% for book in myBookType.books %}
 					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>
@@ -73,7 +88,7 @@
 				</tbody>
 			</table>
 		{% endfor %}
-
+	<br><br>
 	<div style="text-align: center;">
     <button type="submit">עבור להזמנה</button>
 	</div>

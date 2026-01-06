@@ -21,9 +21,10 @@
 			text-align: center;
 		}
 		p {
+			font-weight: bold;
 			font-size: 32px;
 		}
-		td {
+		th, td, ul {
 			font-size: 25px;
 		}
 		@media (max-width: 600px) {
@@ -35,6 +36,7 @@
 				width: 90%;
 			}
 			table {
+				width: 100%;
 				display: block;
 				overflow-x: auto;
 			}
@@ -46,12 +48,14 @@
 	{% for myBookType in items %} 
 			<p>{{myBookType.book_type}}</p>
 			<table>
-				<tbody>
-					<thead>
+				<thead>
 					<tr>
-						<td>שם</td><td>מחיר</td><td>כמות במלאי</td>
+						<th>שם</th>
+						<th>מחיר</th>
+						<th>כמות במלאי</th>
 					</tr>
-					</thead>
+				</thead>
+				<tbody>
 					{% for book in myBookType.books %}
 						<tr>
 							<td>{{book.name}}</td>

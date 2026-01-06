@@ -15,33 +15,31 @@
     	}
     	th, td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 2px;
         text-align: right;
+		font-size: 25px;
     	}
-		h1, h2{
+		button, h1, h2{
 			text-align: center;
 		}
-		pre {
-			font-size: 16px;
+		input[type="text"], button, li {
+			font-size: 30px;
 		}
-		button {
-			text-align: center;
-			font-size: 20px;
-		}
-		li {
-            font-size: 20px;
-        }
 	</style>    
 </head>
 <body>
 	<form method="POST" action="{{ url_for('place_order') }}">
 			<table>
-				<tbody>
-					<thead>
+				<thead>
 					<tr>
-						<td>סוג</td><td>שם</td><td>מחיר ליחידה</td><td>כמות הזמנה</td><td>מחיר כולל</td>
+						<th>סוג</th>
+						<th>שם</th>
+						<th>מחיר ליחידה</th>
+						<th>כמות הזמנה</th>
+						<th>מחיר כולל</th>
 					</tr>
-					</thead>  
+				</thead>  
+				<tbody>
                     {% for i in range(book_types|length) %}
                      <tr>
                         <td>{{book_types[i]}}  </td>
@@ -69,9 +67,9 @@
 			<h1>ההזמנה מוכנה!</h1>
 			<h1>לחץ אישור לבצע מכירה:</h1>
 			<h2>
-				(*יש לוודא שהתשלום עבר)
 				<br>
 				<input type="text" name="seller" id="seller_input" placeholder="שם ספרן" required>
+				<br>	(*יש לוודא שהתשלום עבר)
 			</h2>
 		<div style="text-align: center;">
 		<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
