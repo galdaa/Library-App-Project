@@ -44,9 +44,11 @@
 			<p>{{myBookType.book_type}}</p>
 			<table>
 				<tbody>
+					<thead>
 					<tr>
-						<pre><td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להזמנה:</td></pre>
+						<td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להזמנה:</td>
 					</tr>
+					</thead>
 					{% for book in myBookType.books %}
 					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>

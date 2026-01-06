@@ -37,13 +37,17 @@
 	<form method="POST" action="{{ url_for('place_order') }}">
 			<table>
 				<tbody>
+					<thead>
 					<tr>
 						<td>סוג</td><td>שם</td><td>מחיר ליחידה</td><td>כמות הזמנה</td><td>מחיר כולל</td>
-					</tr>          
+					</tr>
+					</thead>  
                     {% for i in range(book_types|length) %}
                      <tr>
-                        <td>{{book_types[i]}}</td><td>{{book_names[i]}}</td>
-                        <td>{{book_prices[i]}}</td><td>{{quantities[i]}}</td>
+                        <td>{{book_types[i]}}  </td>
+						<td>{{book_names[i]}}  </td>
+                        <td>{{book_prices[i]}} </td>
+						<td>{{quantities[i]}}  </td>
                         <td>{{total_prices[i]}}</td>
                     </tr>
                     {% endfor %}
@@ -55,7 +59,7 @@
 					{% endfor %}
 				</tbody>
 			</table>
-            			<table>
+            <table>
 				<tbody>
 					<tr>
 						<td>תשלום סופי:</td><td>{{total}}</td>
@@ -73,30 +77,31 @@
 		<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
 		</div>
 	</form>
+
+	<script>//script for lock button to avoid several push
+		// find first 'from' , 'submitBtn'
+		const form = document.querySelector('form');
+		const btn = document.getElementById('submitBtn');
+
+		form.addEventListener('submit', function(e) {
+			if (btn.disabled) {
+				e.preventDefault();
+				return false;
+			}
+
+			btn.disabled = true; // disable btn
+			btn.innerText = "שולח נתונים... נא להמתין"; 
+
+			const hiddenInput = document.createElement('input');
+			hiddenInput.type = 'hidden';
+			hiddenInput.name = 'confirm_action';
+			hiddenInput.value = 'true';
+			form.appendChild(hiddenInput);
+
+			return true;
+		});
+	</script>
 </body>
-<script>//script for lock button to avoid several push
-    // find first 'from' , 'submitBtn'
-    const form = document.querySelector('form');
-    const btn = document.getElementById('submitBtn');
-
-    form.addEventListener('submit', function(e) {
-		if (btn.disabled) {
-            e.preventDefault();
-            return false;
-        }
-
-        btn.disabled = true; // disable btn
-        btn.innerText = "שולח נתונים... נא להמתין"; 
-
-		const hiddenInput = document.createElement('input');
-        hiddenInput.type = 'hidden';
-        hiddenInput.name = 'confirm_action';
-        hiddenInput.value = 'true';
-        form.appendChild(hiddenInput);
-
-        return true;
-    });
-</script>
 
 
 <ul>
