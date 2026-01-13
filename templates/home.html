@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 	<style>
-		h1, p, li {
+		h1, p, li, input[type="int"]{
 			text-align: center;
 		}
         h1 {
 			font-size: 50px;
 		}
-        p {
+        p, input[type="int"]{
 			font-size: 40px;
 		}
         li {
@@ -20,7 +20,8 @@
 			
 <p>מה תרצו לעשות היום?</p>
     <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
-	<li><a href="{{ url_for('sell_page') }}" onclick="return sellKey(event)">קניית/מכירת ספרים</a></li>
+	<br>
+    <li><a href="{{ url_for('sell_page') }}" onclick="return sellKey(event)">קניית/מכירת ספרים</a></li>
 	<br>
 	<li><a href="{{ url_for('order_page') }}" onclick="return masterKey(event)">הזמנה למלאי</a></li>
 
