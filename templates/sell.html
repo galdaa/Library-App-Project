@@ -68,11 +68,16 @@
 					{% for book in myBookType.books %}
 					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>
-							<td>{{book.name}}</td>
+							{% if book.stock_quantity == '' %}
+								<th>{{book.name}}</th>
+							{% else %}
+								<td>{{book.name}}</td>
+							{% endif %}
 							<td>{{book.price}}</td>
 							<td>{{book.stock_quantity}}</td>
 							<td>
-							<label for="quantity"></label>
+							{% if book.stock_quantity != '' %}
+
 								<input type="number" 
 									id="quantity" 
 									name="quantities[]" 
@@ -83,6 +88,7 @@
 								
 								<input type="hidden" name="book_names[]" value="{{ book.name }}">
 								<input type="hidden" name="book_prices[]" value="{{ book.price }}">
+							{% endif %}
 							</td>
 						</tr>
 					{% endfor %}

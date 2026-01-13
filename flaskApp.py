@@ -10,6 +10,7 @@ from oauth2client.service_account import ServiceAccountCredentials # google API
 STOCK_QUAN_COL_FILE_INDEX =  3
 MONEY = "Money"
 HISTORY = "History"
+ORDER = "Order"
 
 #access to google api defines
 SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -170,6 +171,48 @@ def Clean_order(book_types, book_names, book_prices, quantities):
 			del quantities[i]
 			i -= 1
 		i += 1
+
+@app.route('/order_page', methods=['GET', 'POST'])
+def order_page():
+	items = load_data()
+	book_types = []
+	book_names = []
+	book_prices = []
+	quantities = []
+	if request.method == 'POST':
+		print("\n~~s~~\n")
+		book_types = request.form.getlist('book_types[]')
+		book_names = request.form.getlist('book_names[]')
+		book_prices = request.form.getlist('book_prices[]')
+		quantities = request.form.getlist('quantities[]')
+		print(book_types,book_names,book_prices,quantities)
+		print("\n~e~\n")
+	return render_template('order2stock.html', items = items)
+
+@app.route('/place_order2stock', methods=['POST'])
+def place_order2stock():
+	'''book_types = request.form.getlist('book_types[]')
+	book_names = request.form.getlist('book_names[]')
+	book_prices = request.form.getlist('book_prices[]')
+	quantities = request.form.getlist('quantities[]')
+	Clean_order(book_types, book_names, book_prices, quantities)
+	total_prices = []
+	total_prices = Calc_total_prices(book_prices, quantities)
+	print(f"total Order: \nTyeps: {book_types} \nNames: {book_names} \n"
+		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
+	total = Calc_total(total_prices)
+	if request.form.get('confirm_action') == 'true':
+		Sell_order_update(book_types, book_names, quantities)
+		Add_money(total)
+		cache.clear()
+		print("Cache cleared after sale to ensure fresh data.")
+		seller = request.form.get('seller')
+		print(seller)
+		Add_history(seller, book_types, book_names, quantities, total_prices)
+		return redirect(url_for('home'))'''
+	return render_template('place_order2stock.html', book_types = book_types, 
+						book_names = book_names, book_prices = book_prices, 
+						quantities = quantities, total_prices = total_prices, total = total)
 
 if __name__ == '__main__':
     app.run(debug=True)

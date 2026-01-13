@@ -2,6 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>סיפרייה</title>
 	<style>
 		table {
@@ -11,55 +12,101 @@
     	}
     	th, td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 2px;
         text-align: right;
     	}
 		h1 {
 			text-align: center;
 		}
-		pre {
-			font-size: 16px;
+		p {
+			font-weight: bold;
+			font-size: 32px;
+		}
+		th, td, ul {
+			font-size: 25px;
+		}
+		button {
+			font-size: 35px;
+		}
+		input[type="number"] {
+			font-size: 25px;    
+			width: 40px;        
+			padding: 2px;
+		}
+		@media (max-width: 600px) {
+			th, td, p, input[type="number"], ul {
+				font-size: 18px;
+			}
+			button {
+				font-size: 28px;
+				width: 90%;
+			}
+			table {
+				width: 100%;
+				display: block;
+				overflow-x: auto;
+			}
 		}
 	</style>    
 </head>
 <body>
-    <h1>הזמנת ספרים למלאי:</h1>   
+    <h1>הזמנת ספרים למלאי:</h1>    
 
-    <form method="POST" action="{{ url_for('place_order') }}">
+    <form method="POST" action="{{ url_for('place_order2stock') }}">
 	{% for myBookType in items %} 
 			<p>{{myBookType.book_type}}</p>
 			<table>
-				<tbody>
+				<thead>
 					<tr>
-						<td>שם</td><td>מחיר</td><td>כמות במלאי</td><td>כמות להוסיף להזמנה:</td>
+						<th>שם</th>
+						<th>מחיר</th>
+						<th>כמות במלאי</th>
+						<th>כמות להוסיף להזמנה:</th>
 					</tr>
+				</thead>
+				<tbody>
 					{% for book in myBookType.books %}
 					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>
-							<td>{{book.name}}</td>
-							<td>{{book.price}}</td>
+							{% if book.stock_quantity == '' %}
+								<th>{{book.name}}</th>
+							{% else %}
+								<td>{{book.name}}</td>
+							{% endif %}
+							{% if book.stock_quantity != '' %}
+							<td>
+								<input type="number" 
+									id="quantity" 
+									name="quantities[]" 
+									value={{book.price}}
+									min="0" 
+									required>
+							</td>
+							{% endif %}
 							<td>{{book.stock_quantity}}</td>
 							<td>
-							<label for="quantity"></label><br>
+							{% if book.stock_quantity != '' %}
+							<label for="quantity"></label>
 								<input type="number" 
 									id="quantity" 
 									name="quantities[]" 
 									value="0"
 									min="0" 
-									''TODO ''max={{MONEY_WE_HAVE?}}
 									required>
 								
 								<input type="hidden" name="book_names[]" value="{{ book.name }}">
 								<input type="hidden" name="book_prices[]" value="{{ book.price }}">
+							{% endif %}
 							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</table>
 		{% endfor %}
-
-
-    <button type="submit">בצע הזמנה</button>
+	<br><br>
+	<div style="text-align: center;">
+    <button type="submit">עבור להזמנה</button>
+	</div>
     </form>
 
     <ul>
@@ -68,3 +115,4 @@
 </body>
 
 </html>
+

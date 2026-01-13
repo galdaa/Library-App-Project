@@ -15,7 +15,40 @@
         }
 	</style>   
 <h1>ברוכים הבאים לספרייה</h1>
+<br>
+<p><input type="int" name="key" id="key_input" placeholder="קוד גישה" required></p>
+			
 <p>מה תרצו לעשות היום?</p>
     <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
-    <li><a href="{{ url_for('sell_page') }}">קניית/מכירת ספרים</a></li>
+	<li><a href="{{ url_for('sell_page') }}" onclick="return sellKey(event)">קניית/מכירת ספרים</a></li>
+	<br>
+	<li><a href="{{ url_for('order_page') }}" onclick="return masterKey(event)">הזמנה למלאי</a></li>
+
+<script>
+	const seller_key = "1212"; 
+	const master_Key = "12120"; 
+function sellKey(event) {
+    
+    const inputKey = document.getElementById('key_input').value;
+
+    if (inputKey === seller_key || inputKey === master_Key) {
+        return true;
+    } else {
+        alert("קוד גישה שגוי!");
+        event.preventDefault();
+        return false;
+    }
+}
+function masterKey(event) {
+    const inputKey = document.getElementById('key_input').value;
+
+    if (inputKey === master_Key) {
+        return true;
+    } else {
+        alert("קוד גישה שגוי!");
+        event.preventDefault();
+        return false;
+    }
+}
+</script>
 </html>
