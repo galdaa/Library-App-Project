@@ -37,7 +37,7 @@ def load_data():
 		print("Loading data from Cache")
 		return cache['items_data']
 	
-	book_types = {"SA", "AA", "S-ANON", "L-ANON"}
+	book_types = ["SA", "AA", "S-ANON", "L-ANON"]
 	items = []
 	for book_type in book_types:
 		type_data = {
@@ -191,7 +191,7 @@ def order_page():
 
 @app.route('/place_order2stock', methods=['POST'])
 def place_order2stock():
-	'''book_types = request.form.getlist('book_types[]')
+	book_types = request.form.getlist('book_types[]')
 	book_names = request.form.getlist('book_names[]')
 	book_prices = request.form.getlist('book_prices[]')
 	quantities = request.form.getlist('quantities[]')
@@ -202,14 +202,12 @@ def place_order2stock():
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
 	total = Calc_total(total_prices)
 	if request.form.get('confirm_action') == 'true':
-		Sell_order_update(book_types, book_names, quantities)
-		Add_money(total)
+		#Sell_order_update(book_types, book_names, quantities)
+		#Add_money(total)
 		cache.clear()
-		print("Cache cleared after sale to ensure fresh data.")
-		seller = request.form.get('seller')
-		print(seller)
-		Add_history(seller, book_types, book_names, quantities, total_prices)
-		return redirect(url_for('home'))'''
+		print("Cache cleared after order to ensure fresh data.")
+		#Add_history(book_types, book_names, quantities, total_prices)
+		return redirect(url_for('home'))
 	return render_template('place_order2stock.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)

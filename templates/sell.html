@@ -33,6 +33,15 @@
 			width: 40px;        
 			padding: 2px;
 		}
+		.color-box {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			margin-left: 8px; 
+			border: 1px solid #ccc; 
+			vertical-align: middle;
+			border-radius: 2px; 
+		}
 		@media (max-width: 600px) {
 			th, td, p, input[type="number"], ul {
 				font-size: 18px;
@@ -66,18 +75,21 @@
 				</thead>
 				<tbody>
 					{% for book in myBookType.books %}
-					<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 						<tr>
 							{% if book.stock_quantity == '' %}
 								<th>{{book.name}}</th>
 							{% else %}
-								<td>{{book.name}}</td>
+								<td>
+									{% if book.color != '' %}
+        							<span class="color-box" style="background-color: {{book.color}};"></span>
+    								{% endif %}
+									{{book.name}}
+								</td>
 							{% endif %}
 							<td>{{book.price}}</td>
 							<td>{{book.stock_quantity}}</td>
 							<td>
 							{% if book.stock_quantity != '' %}
-
 								<input type="number" 
 									id="quantity" 
 									name="quantities[]" 
@@ -85,7 +97,7 @@
 									min="0" 
 									max={{book.stock_quantity}}
 									required>
-								
+								<input type="hidden" name="book_types[]" value="{{ myBookType.book_type }}">
 								<input type="hidden" name="book_names[]" value="{{ book.name }}">
 								<input type="hidden" name="book_prices[]" value="{{ book.price }}">
 							{% endif %}

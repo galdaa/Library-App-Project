@@ -1,6 +1,3 @@
-<form method="POST" action="{{ url_for('place_order') }}">
-TODO action1 - order to stock - action2 replace order in file
-display orders from file
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 
@@ -8,6 +5,7 @@ display orders from file
 
 <head>
     <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>סיפרייה</title>
 	<style>
 		table {
@@ -17,46 +15,103 @@ display orders from file
     	}
     	th, td {
         border: 1px solid #333;
-        padding: 12px;
+        padding: 2px;
         text-align: right;
+		font-size: 25px;
     	}
-		h1 {
+		button, h1, h2{
 			text-align: center;
 		}
-		pre {
-			font-size: 16px;
+		@media (max-width: 600px) {
+			th, td, p, ul {
+				font-size: 18px;
+			}
+			button {
+				font-size: 28px;
+				width: 90%;
+			}
+			table {
+				width: 100%;
+				display: block;
+				overflow-x: auto;
+			}
 		}
 	</style>    
 </head>
 <body>
+	<form method="POST" action="{{ url_for('place_order2stock') }}">
 			<table>
-				<tbody>
+				<thead>
 					<tr>
-						<td>סוג</td><td>שם</td><td>מחיר ליחידה</td><td>כמות הזמנה</td><td>מחיר כולל</td>
-					</tr>          
+						<th>סוג</th>
+						<th>שם</th>
+						<th>מחיר ליחידה</th>
+						<th>כמות הזמנה</th>
+						<th>מחיר כולל</th>
+					</tr>
+				</thead>  
+				<tbody>
                     {% for i in range(book_types|length) %}
                      <tr>
-                        <td>{{book_types[i]}}</td><td>{{book_names[i]}}</td>
-                        <td>{{book_prices[i]}}</td><td>{{quantities[i]}}</td>
+                        <td>{{book_types[i]}}  </td>
+						<td>{{book_names[i]}}  </td>
+                        <td>{{book_prices[i]}} </td>
+						<td>{{quantities[i]}}  </td>
                         <td>{{total_prices[i]}}</td>
                     </tr>
                     {% endfor %}
+					{% for i in range(book_types|length) %}
+						<input type="hidden" name="book_types[]"  value="{{ book_types[i] }}">
+						<input type="hidden" name="book_names[]"  value="{{ book_names[i] }}">
+						<input type="hidden" name="book_prices[]" value="{{ book_prices[i] }}">
+						<input type="hidden" name="quantities[]"  value="{{ quantities[i] }}">
+					{% endfor %}
 				</tbody>
 			</table>
-            			<table>
+            <table>
 				<tbody>
 					<tr>
 						<td>תשלום סופי:</td><td>{{total}}</td>
 					</tr>          
 				</tbody>
 			</table>
+			<h1>ההזמנה מוכנה!</h1>
+			<h1>לחץ אישור לבצע מכירה:</h1>
+		<div style="text-align: center;">
+		<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
+		</div>
+	</form>
+
+	<script>//script for lock button to avoid several push
+		// find first 'from' , 'submitBtn'
+		const form = document.querySelector('form');
+		const btn = document.getElementById('submitBtn');
+
+		form.addEventListener('submit', function(e) {
+			if (btn.disabled) {
+				e.preventDefault();
+				return false;
+			}
+
+			btn.disabled = true; // disable btn
+			btn.innerText = "שולח נתונים... נא להמתין"; 
+
+			const hiddenInput = document.createElement('input');
+			hiddenInput.type = 'hidden';
+			hiddenInput.name = 'confirm_action';
+			hiddenInput.value = 'true';
+			form.appendChild(hiddenInput);
+
+			return true;
+		});
+	</script>
 </body>
 
-<h1>ההזמנה למלאי מוכנה!</h1>
-	<button type="submit">אשר הזמנה וסיים</button>
+
 <ul>
-    <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
+    <li><a href="{{ url_for('home') }}">ביטול וחזרה לדף ראשי</a></li>
+	<li><a href="{{ url_for('sell_page') }}">ביטול וחזרה להזמנת ספרים</a></li>
+    <li><a href="{{ url_for('stock_view') }}">ביטול וצפייה במלאי הספרים</a></li>
 </ul>
 
 </html>
-</form>
