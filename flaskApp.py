@@ -114,6 +114,7 @@ def place_order():
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)
 
+#TODO - generic sell/buy by action bit
 def Sell_order_update(book_types, book_names, quantities):
 	for i in range(len(book_names)):
 		sheet = get_sheet(book_types[i])
@@ -125,12 +126,31 @@ def Sell_order_update(book_types, book_names, quantities):
 		sheet.update_cell(row_index, STOCK_QUAN_COL_FILE_INDEX, new_stock)
 		print(f"Updated {book_names[i]}: {curr_stock} -> {new_stock}")
 
+def Buy_order_update(book_types, book_names, quantities):
+	for i in range(len(book_names)):
+		sheet = get_sheet(book_types[i])
+		cell = sheet.find(book_names[i])
+		quan = int(quantities[i])
+		row_index = cell.row
+		curr_stock = int(sheet.cell(row_index, STOCK_QUAN_COL_FILE_INDEX).value)
+		new_stock = int(curr_stock + quan)
+		sheet.update_cell(row_index, STOCK_QUAN_COL_FILE_INDEX, new_stock)
+		print(f"Updated {book_names[i]}: {curr_stock} -> {new_stock}")
+
+#TODO - add/sub money by action bit
 def Add_money(money):
 	sheet = get_sheet(MONEY)
 	curr_money = int(sheet.cell(1, 1).value)
 	new_money = int(curr_money + int(money))
 	sheet.update_cell(1, 1, new_money)
 	print(f"Updated Money {curr_money} + {money} = {new_money}")
+
+def Sub_money(money):
+	sheet = get_sheet(MONEY)
+	curr_money = int(sheet.cell(1, 1).value)
+	new_money = int(curr_money - int(money))
+	sheet.update_cell(1, 1, new_money)
+	print(f"Updated Money {curr_money} - {money} = {new_money}")
 
 def Get_money():
 	sheet = get_sheet(MONEY)
@@ -141,6 +161,14 @@ def Add_history(seller, book_types, book_names, quantities, prices):
 	sheet = get_sheet(HISTORY)
 	for i in range(len(book_types)):
 		row = [now, seller, book_types[i], book_names[i], quantities[i], prices[i]]
+		if (i == (len(book_types) - 1)):
+			row.append(Get_money())
+		sheet.append_row(row)
+
+def Add2order_list(book_types, book_names, quantities, prices):
+	sheet = get_sheet(ORDER)
+	for i in range(len(book_types)):
+		row = [book_types[i], book_names[i], quantities[i], prices[i]]
 		if (i == (len(book_types) - 1)):
 			row.append(Get_money())
 		sheet.append_row(row)
@@ -202,11 +230,15 @@ def place_order2stock():
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
 	total = Calc_total(total_prices)
 	if request.form.get('confirm_action') == 'true':
-		#Sell_order_update(book_types, book_names, quantities)
-		#Add_money(total)
-		cache.clear()
-		print("Cache cleared after order to ensure fresh data.")
+		if request.form.get('confirm_checkbox') == 'true':
+			Buy_order_update(book_types, book_names, quantities)
+			Sub_money(total)
+			cache.clear()
+			print("Cache cleared after buy order to ensure fresh data.")
+		else:
+			print("Order wasn't performed")
 		#Add_history(book_types, book_names, quantities, total_prices)
+		Add2order_list(book_types, book_names, quantities, total_prices)
 		return redirect(url_for('home'))
 	return render_template('place_order2stock.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 

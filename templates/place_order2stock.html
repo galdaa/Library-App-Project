@@ -19,8 +19,12 @@
         text-align: right;
 		font-size: 25px;
     	}
-		button, h1, h2{
+		button, h1, h2, input[type="checkbox"]{
 			text-align: center;
+		}
+		input[type="checkbox"], button {
+    		transform: scale(1.5);
+    		margin: 15px;
 		}
 		@media (max-width: 600px) {
 			th, td, p, ul {
@@ -76,10 +80,15 @@
 				</tbody>
 			</table>
 			<h1>ההזמנה מוכנה!</h1>
-			<h1>לחץ אישור לבצע מכירה:</h1>
-		<div style="text-align: center;">
-		<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
-		</div>
+			<h1>לחץ אישור להוספת הזמנה:</h1>
+			<div style="text-align: center;">
+				<button type="submit" id="submitBtn" name="confirm_action" value="true">אשר מכירה וסיים</button>
+				<br>
+				<h2>ההזמנה בוצעה? 
+				<input type="checkbox" name="confirm_checkbox" value="true">
+				</h2>
+			</div>
+
 	</form>
 
 	<script>//script for lock button to avoid several push
