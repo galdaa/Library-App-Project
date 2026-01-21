@@ -50,6 +50,12 @@ def load_data():
 	print(f"Data was loaded from Google and cached.")
 	return items
 
+def load_orders():	
+	orders = []
+	orders = get_sheet(ORDER).get_all_records()
+	print(f"orders was loaded:{orders}")
+	return orders
+
 #home page for navigation
 @app.route('/')
 def home():
@@ -165,10 +171,11 @@ def Add_history(seller, book_types, book_names, quantities, prices):
 			row.append(Get_money())
 		sheet.append_row(row)
 
-def Add2order_list(book_types, book_names, quantities, prices):
+def Add2order_list(book_types, book_names, quantities, prices, total_prices, performed):
 	sheet = get_sheet(ORDER)
 	for i in range(len(book_types)):
-		row = [book_types[i], book_names[i], quantities[i], prices[i]]
+		check = "V" if performed else "X"
+		row = [book_types[i], book_names[i], quantities[i], prices[i], total_prices[i], check]
 		if (i == (len(book_types) - 1)):
 			row.append(Get_money())
 		sheet.append_row(row)
@@ -189,6 +196,12 @@ def Calc_total_prices(book_prices, quantities):
 		i += 1
 	return total_prices
 
+#####################################################
+# get pointers of synchronized by index lists of: 	#
+# types, names, prices, quantities.					#
+# return the lists after delete the elements 		#
+# attributed to quantity == 0						#
+####################################################
 def Clean_order(book_types, book_names, book_prices, quantities):
 	i = 0
 	while i < len(quantities):
@@ -200,6 +213,24 @@ def Clean_order(book_types, book_names, book_prices, quantities):
 			i -= 1
 		i += 1
 
+#####################################################
+# get pointers of synchronized by index lists of: 	#
+# types, names, prices, quantities, perfromed.		#
+# return the lists after delete the elements 		#
+# attributed to quantity == 0 or not performed		#
+####################################################
+def Clean_order_by_perfromed(book_types, book_names, book_prices, total_prices, quantities, perfromed):
+	i = 0
+	while i < len(quantities):
+		if ((perfromed[i] == "false") or (int(quantities[i]) == 0)):
+			del book_types[i]
+			del book_names[i]
+			del book_prices[i]
+			del total_prices[i]
+			del quantities[i]
+			del perfromed[i]
+			i -= 1
+		i += 1
 @app.route('/order_page', methods=['GET', 'POST'])
 def order_page():
 	items = load_data()
@@ -229,8 +260,10 @@ def place_order2stock():
 	print(f"total Order: \nTyeps: {book_types} \nNames: {book_names} \n"
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}")
 	total = Calc_total(total_prices)
+	performed = False
 	if request.form.get('confirm_action') == 'true':
 		if request.form.get('confirm_checkbox') == 'true':
+			performed = True
 			Buy_order_update(book_types, book_names, quantities)
 			Sub_money(total)
 			cache.clear()
@@ -238,9 +271,63 @@ def place_order2stock():
 		else:
 			print("Order wasn't performed")
 		#Add_history(book_types, book_names, quantities, total_prices)
-		Add2order_list(book_types, book_names, quantities, total_prices)
+		Add2order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
 		return redirect(url_for('home'))
 	return render_template('place_order2stock.html', book_types = book_types, 
+						book_names = book_names, book_prices = book_prices, 
+						quantities = quantities, total_prices = total_prices, total = total)
+
+@app.route('/manage_orders', methods=['GET', 'POST'])
+def manage_orders():
+	orders = load_orders()
+	book_types = []
+	book_names = []
+	book_prices = []
+	total_prices = []
+	quantities = []
+	if request.method == 'POST':
+		print("\n~~s~~\n")
+		book_types =  request.form.getlist('types[]')
+		book_names =  request.form.getlist('names[]')
+		book_prices = request.form.getlist('prices[]')
+		total_prices = request.form.getlist('total_prices[]')
+		quantities =  request.form.getlist('quantities[]')
+		performe   =  request.form.getlist('performe_order[]')
+		print(book_types, book_names, book_prices, total_prices, quantities, performe)
+		print("\n~e~\n")
+	return render_template('manage_orders.html', orders = orders)
+
+@app.route('/performe_orders', methods=['POST'])
+def performe_orders():
+	book_types =  request.form.getlist('types[]')
+	book_names =  request.form.getlist('names[]')
+	book_prices = request.form.getlist('prices[]')
+	total_prices = request.form.getlist('total_prices[]')
+	quantities =  request.form.getlist('quantities[]')
+	performe   =  request.form.getlist('performe_order[]')
+	#Clean_order(book_types, book_names, book_prices, quantities)
+	print(f"before clean: \nTyeps: {book_types} \nNames: {book_names} \n"
+		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {book_prices}"
+		f"\nperforme: {performe}")
+	Clean_order_by_perfromed(book_types, book_names, book_prices, total_prices, quantities, performe)
+	#total_prices = []
+	#total_prices = Calc_total_prices(book_prices, quantities)
+	print(f"after clean: \nTyeps: {book_types} \nNames: {book_names} \n"
+		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {total_prices}"
+		f"\nperforme: {performe}")
+	total = Calc_total(total_prices)
+	performed = False
+	if request.form.get('confirm_buy') == 'true':
+		print("buying.")
+		performed = True
+		Buy_order_update(book_types, book_names, quantities)
+		Sub_money(total)
+		cache.clear()
+		print("Cache cleared after buy order to ensure fresh data.")
+	#Add_history(book_types, book_names, quantities, total_prices)
+		Add2order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
+		return redirect(url_for('home'))
+	return render_template('performe_orders.html', book_types = book_types, 
 						book_names = book_names, book_prices = book_prices, 
 						quantities = quantities, total_prices = total_prices, total = total)
 

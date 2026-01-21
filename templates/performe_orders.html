@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<h1>ההזמנה שלך:</h1>
+
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיפרייה</title>
+	<style>
+		table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    	}
+    	th, td {
+        border: 1px solid #333;
+        padding: 2px;
+        text-align: right;
+		font-size: 25px;
+    	}
+		button, h1, h2{
+			text-align: center;
+		}
+		input[type="text"], button, li {
+			font-size: 30px;
+		}
+		@media (max-width: 600px) {
+			th, td, p, input[type="text"], ul {
+				font-size: 18px;
+			}
+			button {
+				font-size: 28px;
+				width: 90%;
+			}
+			table {
+				width: 100%;
+				display: block;
+				overflow-x: auto;
+			}
+		}
+	</style>    
+</head>
+<body>
+	<form method="POST" action="{{ url_for('performe_orders') }}">
+			<table>
+				<thead>
+					<tr>
+						<th>סוג</th>
+						<th>שם</th>
+						<th>מחיר ליחידה</th>
+						<th>כמות הזמנה</th>
+						<th>מחיר כולל</th>
+					</tr>
+				</thead>  
+				<tbody>
+                    {% for i in range(book_types|length) %}
+                     <tr>
+                        <td>{{book_types[i]}}  </td>
+						<td>{{book_names[i]}}  </td>
+                        <td>{{book_prices[i]}} </td>
+						<td>{{quantities[i]}}  </td>
+                        <td>{{total_prices[i]}}</td>
+                    </tr>
+                    {% endfor %}
+					{% for i in range(book_types|length) %}
+						<input type="hidden" name="types[]"  value="{{ book_types[i] }}">
+						<input type="hidden" name="names[]"  value="{{ book_names[i] }}">
+						<input type="hidden" name="prices[]" value="{{ book_prices[i] }}">
+						<input type="hidden" name="quantities[]"  value="{{ quantities[i] }}">
+						<input type="hidden" name="total_prices[]" value="{{ total_prices[i] }}">
+						<input type="hidden" name="performe_order[]" value="true">
+					{% endfor %}
+				</tbody>
+			</table>
+            <table>
+				<tbody>
+					<tr>
+						<td>תשלום סופי:</td><td>{{total}}</td>
+					</tr>          
+				</tbody>
+			</table>
+			<h1>ההזמנה מוכנה!</h1>
+			<h1>לחץ אישור לבצע קנייה:</h1>
+		<div style="text-align: center;">
+		<button type="submit" id="submitBtn" name="confirm_buy" value="true">אשר קנייה וסיים</button>
+		</div>
+	</form>
+
+	<script>//script for lock button to avoid several push
+		// find first 'from' , 'submitBtn'
+		const form = document.querySelector('form');
+		const btn = document.getElementById('submitBtn');
+
+		form.addEventListener('submit', function(e) {
+			if (btn.disabled) {
+				e.preventDefault();
+				return false;
+			}
+
+			btn.disabled = true; // disable btn
+			btn.innerText = "שולח נתונים... נא להמתין"; 
+
+			const hiddenInput = document.createElement('input');
+			hiddenInput.type = 'hidden';
+			hiddenInput.name = 'confirm_buy';
+			hiddenInput.value = 'true';
+			form.appendChild(hiddenInput);
+
+			return true;
+		});
+	</script>
+</body>
+
+
+<ul>
+    <li><a href="{{ url_for('home') }}">ביטול וחזרה לדף ראשי</a></li>
+    <li><a href="{{ url_for('stock_view') }}">ביטול וצפייה במלאי הספרים</a></li>
+</ul>
+
+</html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 	<style>
-		h1, p, li, input[type="int"]{
+		h1, p, li, manager, input[type="int"]{
 			text-align: center;
 		}
         h1 {
@@ -13,6 +13,12 @@
         li {
             font-size: 40px;
         }
+        manager {
+            font-size: 30px;
+            text-align: center;
+            display: block; 
+            width: 100%;
+        }
 	</style>   
 <h1>ברוכים הבאים לספרייה</h1>
 <br>
@@ -22,9 +28,12 @@
     <li><a href="{{ url_for('stock_view') }}">צפייה במלאי הספרים</a></li>
 	<br>
     <li><a href="{{ url_for('sell_page') }}" onclick="return sellKey(event)">קניית/מכירת ספרים</a></li>
+	<br><br>
+	<manager><a href="{{ url_for('order_page') }}" onclick="return masterKey(event)">הזמנה למלאי</a></manager>
 	<br>
-	<li><a href="{{ url_for('order_page') }}" onclick="return masterKey(event)">הזמנה למלאי</a></li>
+	<manager><a href="{{ url_for('manage_orders') }}" onclick="return masterKey(event)">ניהול מלאי</a></manager>
 
+    
 <script>
 	const seller_key = "1212"; 
 	const master_Key = "12120"; 

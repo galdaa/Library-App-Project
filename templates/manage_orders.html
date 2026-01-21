@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סיפרייה</title>
+	<style>
+		table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 5px;
+    	}
+    	th, td {
+        border: 1px solid #333;
+        padding: 2px;
+        text-align: right;
+    	}
+		h1 {
+			text-align: center;
+		}
+		p {
+			font-weight: bold;
+			font-size: 32px;
+		}
+		th, td, ul {
+			font-size: 25px;
+		}
+		button {
+			font-size: 35px;
+		}
+		input[type="number"] {
+			font-size: 25px;    
+			width: 40px;        
+			padding: 2px;
+		}
+		@media (max-width: 600px) {
+			th, td, p, input[type="number"], ul {
+				font-size: 18px;
+			}
+			button {
+				font-size: 28px;
+				width: 90%;
+			}
+			table {
+				width: 100%;
+				display: block;
+				overflow-x: auto;
+			}
+		}
+	</style>    
+</head>
+<body>
+    <h1>ניהול הזמנות ספרים למלאי:</h1>    
+
+    <form method="POST" action="{{ url_for('performe_orders') }}">
+			<table>
+				<thead>
+					<tr>
+						<th>סוג</th>
+						<th>שם</th>
+						<th>כמות להזמנה</th>
+						<th>מחיר ליחידה</th>
+						<th>מחיר כולל</th>
+						<th>בוצע?</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for order in orders %} 
+					{% if order.done != 'V' %}
+					<tr>
+						<td>{{order.type}}</td>
+						<td>{{order.name}}</td>
+						<td>{{order.quantity}}</td>
+						<td>{{order.price}}</td>
+						<td>{{order.total_price}}</td>
+						<td>
+							<input type="hidden" name="performe_order[]" value="false">   
+    						<input type="checkbox" onchange="this.previousElementSibling.value = this.checked">
+						</td>
+						<input type="hidden" name="types[]"            value="{{order.type}}">
+						<input type="hidden" name="names[]"            value="{{order.name}}">
+						<input type="hidden" name="quantities[]"       value="{{order.quantity}}">
+						<input type="hidden" name="prices[]"           value="{{order.price}}">
+						<input type="hidden" name="total_prices[]"     value="{{order.total_price}}">
+					</tr>
+					{% endif %}
+					{% endfor %}
+				</tbody>
+			</table>
+	<br><br>
+	<div style="text-align: center;">
+    <button type="submit">עבור להזמנה</button>
+	</div>
+    </form>
+
+    <ul>
+        <li><a href="{{ url_for('home') }}">חזרה לדף ראשי</a></li>
+    </ul>
+</body>
+
+</html>
+
