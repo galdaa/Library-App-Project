@@ -193,7 +193,7 @@ def Add2order_list(book_types, book_names, quantities, prices, total_prices, per
 # *the lists may not be empty at the end 				#
 # if some orders wasnt found as discribed				#
 #########################################################
-def Update_Buy_in_order_list(book_types, book_names, quantities, prices, total_prices, performed):
+def Update_buy_in_order_list(book_types, book_names, quantities, prices, total_prices, performed):
 	now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 	sheet = get_sheet(ORDER)
 	lines_data = sheet.get_all_records() # data arrange by first line as titles
@@ -360,8 +360,7 @@ def performe_orders():
 		Sub_money(total)
 		cache.clear()
 		print("Cache cleared after buy order to ensure fresh data.")
-	#Add_history(book_types, book_names, quantities, total_prices)
-		Update_Buy_in_order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
+		Update_buy_in_order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
 		Add2order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
 		return redirect(url_for('home'))
 	return render_template('performe_orders.html', book_types = book_types, 
