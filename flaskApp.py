@@ -180,6 +180,42 @@ def Add2order_list(book_types, book_names, quantities, prices, total_prices, per
 			row.append(Get_money())
 		sheet.append_row(row)
 
+#########################################################
+# This method get orders synced lists:					#
+# book_types, book_names, quantities, 					#
+# prices, total_prices, performed.						#
+#														#
+# search in sheet file at ORDER Worksheet 				#
+# for the same orders which are not done (done = 'X').  #
+# then update there statuse in the sheet to done = 'V' 	#
+# and delete them from the original lists 				#
+#														#
+# *the lists may not be empty at the end 				#
+# if some orders wasnt found as discribed				#
+#########################################################
+def Update_Buy_in_order_list(book_types, book_names, quantities, prices, total_prices, performed):
+	now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+	sheet = get_sheet(ORDER)
+	lines_data = sheet.get_all_records() # data arrange by first line as titles
+	for i in range(len(book_types)):
+		for row in lines_data:
+			if (row['type']        == book_types[i] and
+				row['name']        == book_names[i] and
+				row['quantity']    == quantities[i] and
+				row['price']       == prices[i] and
+				row['total_price'] == total_prices[i] and
+				row['done']        == "X"):
+				row['done'] = "V"
+				del book_types[i]
+				del book_names[i]
+				del quantities[i]
+				del prices[i]
+				del total_prices[i]
+				del performed[i]
+			if (i == (len(book_types) - 1)):
+				row['money'] = Get_money()
+				row['date']  = now
+
 def Calc_total(total_prices):
 	total = 0
 	for price in total_prices:
@@ -299,12 +335,12 @@ def manage_orders():
 
 @app.route('/performe_orders', methods=['POST'])
 def performe_orders():
-	book_types =  request.form.getlist('types[]')
-	book_names =  request.form.getlist('names[]')
-	book_prices = request.form.getlist('prices[]')
+	book_types =   request.form.getlist('types[]')
+	book_names =   request.form.getlist('names[]')
+	book_prices =  request.form.getlist('prices[]')
 	total_prices = request.form.getlist('total_prices[]')
-	quantities =  request.form.getlist('quantities[]')
-	performe   =  request.form.getlist('performe_order[]')
+	quantities =   request.form.getlist('quantities[]')
+	performe   =   request.form.getlist('performe_order[]')
 	#Clean_order(book_types, book_names, book_prices, quantities)
 	print(f"before clean: \nTyeps: {book_types} \nNames: {book_names} \n"
 		f"Prices: {book_prices} \nQuantities: {quantities} \ntotals: {book_prices}"
@@ -325,6 +361,7 @@ def performe_orders():
 		cache.clear()
 		print("Cache cleared after buy order to ensure fresh data.")
 	#Add_history(book_types, book_names, quantities, total_prices)
+		Update_Buy_in_order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
 		Add2order_list(book_types, book_names, quantities, book_prices, total_prices, performed)
 		return redirect(url_for('home'))
 	return render_template('performe_orders.html', book_types = book_types, 
